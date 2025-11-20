@@ -1,123 +1,132 @@
-Projeto de Análise Exploratória de Dados
+ Projeto de Análise Exploratória de Dados  
+ Vendas de Jogos – Loja Online ICE
 
-Vendas de Jogos – Loja Online ICE
+Este projeto analisa dados históricos de vendas de videogames com o objetivo de entender quais fatores influenciam o sucesso comercial de um jogo. O cenário simulado é dezembro de 2016, quando a loja online fictícia ICE planeja suas estratégias de marketing para o ano seguinte.
 
-Este projeto examina dados históricos de vendas de videogames com o objetivo de entender quais fatores influenciam o sucesso comercial de um jogo. A análise simula o cenário de dezembro de 2016, quando a loja online fictícia ICE está planejando campanhas de marketing e decisões estratégicas para 2017.
+A base de dados contém informações de vendas por região, avaliações de usuários e críticos, plataformas, gêneros e classificações ESRB.
 
-A base de dados inclui informações de vendas por região, avaliações de usuários e críticos, plataformas, gêneros e a classificação etária ESRB.
+---
 
-⸻
+ Objetivos do Projeto
 
-Objetivos do Projeto
-	•	Investigar padrões de vendas ao longo dos anos e por plataforma.
-	•	Identificar os fatores que mais influenciam o sucesso de um jogo.
-	•	Criar perfis de consumidores por região (América do Norte, Europa e Japão).
-	•	Testar hipóteses estatísticas sobre diferenças de avaliações entre plataformas e gêneros.
-	•	Produzir insights acionáveis para campanhas de marketing em 2017.
+- Investigar padrões de vendas ao longo dos anos e por plataforma.  
+- Identificar fatores que influenciam o desempenho comercial de um jogo.  
+- Criar perfis de consumidores por região (América do Norte, Europa e Japão).  
+- Testar hipóteses estatísticas relacionadas às avaliações dos usuários.  
+- Gerar insights para orientar decisões estratégicas em 2017.
 
-⸻
+---
 
-1. Entendimento do Dataset
+ 1. Dicionário de Dados
 
-Nesta etapa o foco é explorar:
-	•	Estrutura das colunas
-	•	Tipos de dados
-	•	Volume de jogos por ano
-	•	Disponibilidade de informações essenciais (vendas, gênero, plataforma, rating, avaliações)
+A seguir, uma descrição clara das colunas do dataset, incluindo unidades e interpretações importantes.
 
-⸻
+ **Colunas principais**
 
-2. Preparação dos Dados
+| Coluna | Descrição | Unidade / Observações |
+|-------|-----------|------------------------|
+| `name` | Nome do jogo | Texto |
+| `platform` | Plataforma em que o jogo foi lançado | Ex.: PS4, X360, DS |
+| `year_of_release` | Ano de lançamento | Inteiro; valores ausentes foram removidos antes da conversão |
+| `genre` | Gênero do jogo | Ex.: Action, Sports |
+| `na_sales` | Vendas na América do Norte | **Milhões de dólares** |
+| `eu_sales` | Vendas na Europa | **Milhões de dólares** |
+| `jp_sales` | Vendas no Japão | **Milhões de dólares** |
+| `row_sales` | Vendas no restante do mundo ("Rest of World") | **Milhões de dólares** |
+| `critic_score` | Avaliação média da crítica | Escala 0–100 |
+| `user_score` | Avaliação média dos usuários | Escala 0–10; valores "tbd" foram convertidos para `NaN` e depois substituídos por `-1` como placeholder |
+| `rating` | Classificação etária ESRB | E, T, M, etc. |
 
-As ações principais incluem:
+ **Coluna derivada**
+| Coluna | Descrição |
+|-------|-----------|
+| `global_sales` | Soma de todas as vendas regionais; unidade: **milhões de dólares** |
 
-Limpeza e padronização
-	•	Ajustar nomes das colunas
-	•	Criar, manter ou remover colunas conforme necessário
-	•	Converter tipos (datas, numéricos, strings)
-	•	Documentar cada alteração e explicar o porquê
+---
 
-Tratamento de valores ausentes
-	•	Verificar a natureza dos nulos
-	•	Determinar quando preencher, remover ou manter valores
-	•	Registrar a estratégia adotada para cada coluna
+ 2. Preparação dos Dados
 
-Feature engineering
-	•	Criar coluna de vendas globais somando todas as regiões
+ **Limpeza e padronização**
+- Ajuste dos nomes das colunas para formato consistente (snake_case).  
+- Conversão de `year_of_rzelease` para inteiro após remoção dos valores nulos.  
+- Transformação de `user_score` para tipo numérico:  
+  - valores `"tbd"` foram tratados como dados ausentes,  
+  - convertidos para `NaN`,  
+  - posteriormente substituídos por `-1` para permitir conversão numérica.  
 
-⸻
+ **Tratamento de valores ausentes**
+- `year_of_release`: removidos apenas os registros com valores ausentes.  
+- `user_score`: mantidos registros e utilizado placeholder numérico.  
+- `critic_score` e `rating`: mantidos como `NaN` devido à natureza informativa desses campos.
 
-3. Análise Exploratória
+ **Feature engineering**
+- Criação de `global_sales` a partir da soma das colunas regionais.
 
-3.1 Lançamentos ao longo dos anos
-	•	Quantidade de jogos lançados por ano
-	•	Identificação de períodos com dados confiáveis (para projetar 2017)
+---
 
-3.2 Evolução das plataformas
-	•	Comparar vendas totais por plataforma
-	•	Observar ciclos de surgimento e queda de plataformas
-	•	Selecionar plataformas mais relevantes para o período recente
+ 3. Análise Exploratória
 
-3.3 Foco temporal
-	•	Determinar um intervalo de anos adequado para modelar 2017
-	•	Excluir anos pouco relevantes conforme análise anterior
+ 3.1 Lançamentos ao longo dos anos
+- Volume de jogos por ano.  
+- Identificação de períodos estáveis para modelagem.  
 
-3.4 Vendas por plataforma
-	•	Identificar plataformas líderes
-	•	Verificar crescimento/declínio
-	•	Criar boxplots de vendas globais por plataforma
-	•	Comparar médias e dispersões
+ 3.2 Evolução das plataformas
+- Comparação de vendas totais por plataforma.  
+- Análise do ciclo de vida das plataformas.  
 
-3.5 Impacto das avaliações
-	•	Escolher uma plataforma popular (ex.: PS4, Xbox One ou 3DS)
-	•	Criar um scatterplot relacionando avaliação x vendas
-	•	Calcular correlação e interpretar
-	•	Comparar desempenho dos mesmos jogos em outras plataformas
+ 3.3 Foco temporal
+- Seleção de uma janela temporal relevante para projeções de 2017.  
 
-3.6 Gêneros de jogos
-	•	Avaliar distribuição geral
-	•	Identificar os gêneros mais lucrativos
-	•	Diferenciar entre gêneros de alto e baixo desempenho
+ 3.4 Vendas por plataforma
+- Boxplots de `global_sales` por plataforma.  
+- Comparação de médias e dispersão.  
 
-⸻
+ 3.5 Impacto das avaliações
+- Relação entre `critic_score`, `user_score` e vendas.  
+- Análise de correlação.  
+- Comparações entre plataformas.  
 
-4. Perfil de Usuário por Região (AN, UE, JP)
+ 3.6 Gêneros
+- Identificação dos gêneros mais lucrativos.  
+- Distribuição por desempenho.
+
+---
+
+ 4. Perfil de Usuário por Região (NA, EU, JP)
 
 Para cada região:
 
-Plataformas principais
-	•	Selecionar top 5
-	•	Analisar diferenças de participação de mercado
+ Plataformas principais  
+- Identificação das Top 5 e suas diferenças de mercado.
 
-Gêneros principais
-	•	Selecionar top 5
-	•	Explicar variações entre regiões
+ Gêneros predominantes  
+- Preferências regionais e variações culturais.
 
-Influência da classificação ESRB
-	•	Verificar se o rating impacta vendas de forma diferente em cada mercado
+ Influência da classificação ESRB  
+- Diferenças no impacto do rating sobre vendas dependendo da região.
 
-⸻
+---
 
-5. Teste de Hipóteses
+ 5. Teste de Hipóteses
 
-Hipóteses avaliadas
-	1.	As avaliações médias de usuários para Xbox One e PC são iguais.
-	2.	As avaliações médias de usuários para os gêneros Action e Sports são diferentes.
+ Hipóteses estudadas
+1. As avaliações médias dos usuários para Xbox One e PC são iguais.  
+2. As avaliações médias dos usuários para Action e Sports são diferentes.
 
-Documentação do processo
-	•	Definir hipóteses nulas e alternativas
-	•	Selecionar nível de significância (alfa) e justificar
-	•	Escolher o teste estatístico adequado
-	•	Interpretar os resultados em termos práticos
+ Documentação
+- Definição formal de H₀ e H₁.  
+- Escolha do teste estatístico apropriado.  
+- Interpretação dos resultados em termos práticos.
 
-⸻
+---
 
-6. Conclusão Geral
+ 6. Conclusão Geral
 
-A conclusão deve sintetizar:
-	•	Principais fatores que determinam o sucesso de um jogo
-	•	Plataformas mais promissoras para 2017
-	•	Gêneros com maior potencial
-	•	Comportamentos distintos por região
-	•	Resultados dos testes estatísticos
-	•	Recomendações para campanhas de marketing da loja ICE
+A conclusão apresenta:
+
+- Principais fatores que influenciam vendas.  
+- Plataformas mais promissoras para 2017.  
+- Gêneros com maior potencial.  
+- Diferenças regionais relevantes.  
+- Resultados e implicações dos testes de hipótese.  
+- Recomendações estratégicas para a loja ICE.
